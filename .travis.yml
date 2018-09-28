@@ -1,0 +1,28 @@
+language: cpp
+sudo: required
+dist: trusty
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+      compiler:
+        - gcc
+before_install:
+- eval "${MATRIX_EVAL}"
+- sudo apt-get install autoconf automake cmake libboost-all-dev libconfig++-dev libavcodec-dev libavutil-dev libavformat-dev libav-tools libmagick++-dev libpstreams-dev libconfig++-dev libpstreams-dev ffmpeg libtag1-dev
+- git clone https://github.com/emweb/wt.git wt
+- pushd wt;
+- git checkout 4.0.4
+- cmake -DCMAKE_INSTALL_PREFIX=/usr && sudo make install
+- popd
+script: autoreconf -vfi && ./configure && make
+env:
+  global:
+    - MAKEFLAGS="-j 2"
